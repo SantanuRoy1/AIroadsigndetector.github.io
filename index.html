@@ -176,43 +176,51 @@
 
 <select id="video-source"></select>
 
-<script type="text/javascript">// Variables to store the video element and the media stream
-  let video = document.getElementById('video');
-  let stream;
+<script>
+  // Get the video element
+  const video = document.getElementById('videoElement');
 
-  // Function to switch the camera
-  async function switchCamera() {
-    try {
-      // Stop the current stream
-      if (stream) {
-        stream.getTracks().forEach(track => track.stop());
-      }
-
-      // Get the available video devices
-      const devices = await navigator.mediaDevices.enumerateDevices();
-
-      // Find the video device with the desired facing mode
-      const rearCamera = devices.find(device => device.kind === 'videoinput' && device.label.toLowerCase().includes('back'));
-
-      // Get the media stream with the rear camera
-      stream = await navigator.mediaDevices.getUserMedia({
-        video: {
-          deviceId: rearCamera.deviceId,
-          facingMode: { exact: 'environment' }
-        }
-      });
-
-      // Set the video source to the stream
-      video.srcObject = stream;
-    } catch (error) {
-      console.error('Error switching camera:', error);
-    }
+  // Function to handle errors
+  function handleError(error) {
+    console.log('Error: ', error);
   }
 
-  // Add click event listener to the switch button
-  let switchButton = document.getElementById('switchButton');
-  switchButton.addEventListener('click', switchCamera);
+  // Function to start the camera with the specified facing mode
+  function startCamera(facingMode) {
+    // Constraints object to specify the facing mode
+    const constraints = {
+      video: {
+        facingMode: facingMode
+      }
+    };
+
+    // Request access to the camera
+    navigator.mediaDevices.getUserMedia(constraints)
+      .then(function(stream) {
+        // Attach the stream to the video element
+        video.srcObject = stream;
+      })
+      .catch(handleError);
+  }
+
+  // Switch camera function
+  function switchCamera() {
+    const currentFacingMode = video.srcObject.getVideoTracks()[0].getSettings().facingMode;
+    const newFacingMode = currentFacingMode === 'user' ? 'environment' : 'user';
+
+    // Stop the current camera stream
+    video.srcObject.getTracks().forEach(function(track) {
+      track.stop();
+    });
+
+    // Start the camera with the new facing mode
+    startCamera(newFacingMode);
+  }
+
+  // Start the camera with the default facing mode (front camera)
+  startCamera('user');
 </script>
+<button onclick="switchCamera()">Switch Camera</button>
 <!-- stylise the button my boy-->
 <button type="button" onclick="init()"><b>Start</b></button>
 <div id="webcam-container"></div>
