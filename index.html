@@ -176,31 +176,42 @@
 
 <select id="video-source"></select>
 
-<script type="text/javascript">navigator.mediaDevices.enumerateDevices().then((devices) => {
-  if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
-    console.log("enumerateDevices is not supported.");
-}
-  let videoSourcesSelect = document.getElementById("video-source");
+<script type="text/javascript">// Variables to store the video element and the media stream
+  let video = document.getElementById('video');
+  let stream;
 
-  // Iterate over all the list of devices (InputDeviceInfo and MediaDeviceInfo)
-  devices.forEach((device) => {
-      let option = new Option();
-      option.value = device.deviceId;
-
-      // According to the type of media device
-      switch(device.kind){
-          // Append device to list of Cameras
-          case "videoinput":
-              option.text = device.label || `Camera ${videoSourcesSelect.length + 1}`;
-              videoSourcesSelect.appendChild(option);
-              break;
+  // Function to switch the camera
+  async function switchCamera() {
+    try {
+      // Stop the current stream
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
       }
 
-      console.log(device);
-  });
-}).catch(function (e) {
-  console.log(e.name + ": " + e.message);
-});
+      // Get the available video devices
+      const devices = await navigator.mediaDevices.enumerateDevices();
+
+      // Find the video device with the desired facing mode
+      const rearCamera = devices.find(device => device.kind === 'videoinput' && device.label.toLowerCase().includes('back'));
+
+      // Get the media stream with the rear camera
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          deviceId: rearCamera.deviceId,
+          facingMode: { exact: 'environment' }
+        }
+      });
+
+      // Set the video source to the stream
+      video.srcObject = stream;
+    } catch (error) {
+      console.error('Error switching camera:', error);
+    }
+  }
+
+  // Add click event listener to the switch button
+  let switchButton = document.getElementById('switchButton');
+  switchButton.addEventListener('click', switchCamera);
 </script>
 <!-- stylise the button my boy-->
 <button type="button" onclick="init()"><b>Start</b></button>
@@ -260,18 +271,6 @@
             labelContainer.childNodes[i].innerHTML = classPrediction;
         }
     }
-
-
-
-    let videoSourcesSelect = document.getElementById("video-source");
-let videoPlayer = document.getElementById("player");
-
-videoSourcesSelect.onchange = function(){
-    MediaStreamHelper.requestStream().then(function(stream){
-        MediaStreamHelper._stream = stream;
-        videoPlayer.srcObject = stream;
-    });
-};
 
 </script>
 
