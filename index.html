@@ -173,7 +173,6 @@
     <p class="lead">
 <div>Using Tensorflow(Python)</div>
 <!-- stylise the button my boy-->
-
 <button type="button" onclick="init()"><b>Start</b></button>
 <div id="webcam-container"></div>
 <div id="label-container"></div>
@@ -203,8 +202,7 @@
         // Convenience function to setup a webcam
         const flip = false; // whether to flip the webcam
         webcam = new tmImage.Webcam(200, 200, flip); // width, height, flip
-        const devices = await navigator.mediaDevices.enumerateDevices();
-        await webcam.setup({ deviceId: devices[0].deviceId }) // request access to the webcam
+        await webcam.setup({ facingMode: "environment" }); // request access to the webcam
         await webcam.play();
         window.requestAnimationFrame(loop);
 
