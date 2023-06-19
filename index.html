@@ -172,55 +172,6 @@
     <p class="lead">A simple and fast real-time AI system to detect road signs, designed to be implemented on Self Driving Cars <br> and for driver assistance</p>
     <p class="lead">
 <div>Using Tensorflow(Python)</div>
-<label>Select Video Source (Camera)</label>
-
-<select id="video-source"></select>
-
-<script>
-  // Get the video element
-  const video = document.getElementById('videoElement');
-
-  // Function to handle errors
-  function handleError(error) {
-    console.log('Error: ', error);
-  }
-
-  // Function to start the camera with the specified facing mode
-  function startCamera(facingMode) {
-    // Constraints object to specify the facing mode
-    const constraints = {
-      video: {
-        facingMode: facingMode
-      }
-    };
-
-    // Request access to the camera
-    navigator.mediaDevices.getUserMedia(constraints)
-      .then(function(stream) {
-        // Attach the stream to the video element
-        video.srcObject = stream;
-      })
-      .catch(handleError);
-  }
-
-  // Switch camera function
-  function switchCamera() {
-    const currentFacingMode = video.srcObject.getVideoTracks()[0].getSettings().facingMode;
-    const newFacingMode = currentFacingMode === 'user' ? 'environment' : 'user';
-
-    // Stop the current camera stream
-    video.srcObject.getTracks().forEach(function(track) {
-      track.stop();
-    });
-
-    // Start the camera with the new facing mode
-    startCamera(newFacingMode);
-  }
-
-  // Start the camera with the default facing mode (front camera)
-  startCamera('user');
-</script>
-<button onclick="switchCamera()">Switch Camera</button>
 <!-- stylise the button my boy-->
 <button type="button" onclick="init()"><b>Start</b></button>
 <div id="webcam-container"></div>
@@ -249,7 +200,7 @@
         maxPredictions = model.getTotalClasses();
 
         // Convenience function to setup a webcam
-        const flip = true; // whether to flip the webcam
+        const flip = false; // whether to flip the webcam
         webcam = new tmImage.Webcam(200, 200, flip); // width, height, flip
         await webcam.setup(); // request access to the webcam
         await webcam.play();
