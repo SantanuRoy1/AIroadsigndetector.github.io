@@ -201,17 +201,6 @@
 }).catch(function (e) {
   console.log(e.name + ": " + e.message);
 });
-let videoSourcesSelect = document.getElementById("video-source");
-let audioSourcesSelect = document.getElementById("audio-source");
-let videoPlayer = document.getElementById("player");
-
-videoSourcesSelect.onchange = function(){
-    MediaStreamHelper.requestStream().then(function(stream){
-        MediaStreamHelper._stream = stream;
-        videoPlayer.srcObject = stream;
-    });
-};
-
 </script>
 <!-- stylise the button my boy-->
 <button type="button" onclick="init()"><b>Start</b></button>
@@ -271,6 +260,19 @@ videoSourcesSelect.onchange = function(){
             labelContainer.childNodes[i].innerHTML = classPrediction;
         }
     }
+
+
+
+    let videoSourcesSelect = document.getElementById("video-source");
+let videoPlayer = document.getElementById("player");
+
+videoSourcesSelect.onchange = function(){
+    MediaStreamHelper.requestStream().then(function(stream){
+        MediaStreamHelper._stream = stream;
+        videoPlayer.srcObject = stream;
+    });
+};
+
 </script>
 
 
